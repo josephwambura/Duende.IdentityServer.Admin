@@ -8,12 +8,13 @@ using Microsoft.AspNetCore.Http;
 using Skoruba.Duende.IdentityServer.STS.Identity.Helpers;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Logging;
 
 namespace Skoruba.Duende.IdentityServer.STS.Identity.Services;
 
 public class OpenIdClaimsMappingConfig : ConfigureAuthenticationOptions<OpenIdConnectOptions, OidcProvider>
 {
-    public OpenIdClaimsMappingConfig(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+    public OpenIdClaimsMappingConfig(IHttpContextAccessor httpContextAccessor, ILogger<OpenIdClaimsMappingConfig> logger) : base(httpContextAccessor, logger)
     {
     }
 
