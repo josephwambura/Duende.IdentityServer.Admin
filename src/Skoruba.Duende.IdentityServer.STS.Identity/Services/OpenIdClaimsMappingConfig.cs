@@ -12,12 +12,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Skoruba.Duende.IdentityServer.STS.Identity.Services;
 
-public class OpenIdClaimsMappingConfig : ConfigureAuthenticationOptions<OpenIdConnectOptions, OidcProvider>
+public class OpenIdClaimsMappingConfig(IHttpContextAccessor httpContextAccessor, ILogger<OpenIdClaimsMappingConfig> logger) : ConfigureAuthenticationOptions<OpenIdConnectOptions, OidcProvider>(httpContextAccessor, logger)
 {
-    public OpenIdClaimsMappingConfig(IHttpContextAccessor httpContextAccessor, ILogger<OpenIdClaimsMappingConfig> logger) : base(httpContextAccessor, logger)
-    {
-    }
-
     protected override void Configure(ConfigureAuthenticationContext<OpenIdConnectOptions, OidcProvider> context)
     {
         var oidcProvider = context.IdentityProvider;
