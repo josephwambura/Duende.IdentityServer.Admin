@@ -34,56 +34,38 @@ namespace Skoruba.Duende.IdentityServer.STS.Identity.Controllers
 {
     [SecurityHeaders]
     [Authorize]
-    public class AccountController<TUser, TKey> : Controller
+    public class AccountController<TUser, TKey>(
+        UserResolver<TUser> userResolver,
+        UserManager<TUser> userManager,
+        ApplicationSignInManager<TUser> signInManager,
+        IIdentityServerInteractionService interaction,
+        IClientStore clientStore,
+        IAuthenticationSchemeProvider schemeProvider,
+        IEventService events,
+        IEmailSender emailSender,
+        IGenericControllerLocalizer<AccountController<TUser, TKey>> localizer,
+        LoginConfiguration loginConfiguration,
+        RegisterConfiguration registerConfiguration,
+        IdentityOptions identityOptions,
+        ILogger<AccountController<TUser, TKey>> logger,
+        IIdentityProviderStore identityProviderStore) : Controller
         where TUser : IdentityUser<TKey>, new()
         where TKey : IEquatable<TKey>
     {
-        private readonly UserResolver<TUser> _userResolver;
-        private readonly UserManager<TUser> _userManager;
-        private readonly ApplicationSignInManager<TUser> _signInManager;
-        private readonly IIdentityServerInteractionService _interaction;
-        private readonly IClientStore _clientStore;
-        private readonly IAuthenticationSchemeProvider _schemeProvider;
-        private readonly IEventService _events;
-        private readonly IEmailSender _emailSender;
-        private readonly IGenericControllerLocalizer<AccountController<TUser, TKey>> _localizer;
-        private readonly LoginConfiguration _loginConfiguration;
-        private readonly RegisterConfiguration _registerConfiguration;
-        private readonly IdentityOptions _identityOptions;
-        private readonly ILogger<AccountController<TUser, TKey>> _logger;
-        private readonly IIdentityProviderStore _identityProviderStore;
-
-        public AccountController(
-            UserResolver<TUser> userResolver,
-            UserManager<TUser> userManager,
-            ApplicationSignInManager<TUser> signInManager,
-            IIdentityServerInteractionService interaction,
-            IClientStore clientStore,
-            IAuthenticationSchemeProvider schemeProvider,
-            IEventService events,
-            IEmailSender emailSender,
-            IGenericControllerLocalizer<AccountController<TUser, TKey>> localizer,
-            LoginConfiguration loginConfiguration,
-            RegisterConfiguration registerConfiguration,
-            IdentityOptions identityOptions,
-            ILogger<AccountController<TUser, TKey>> logger,
-            IIdentityProviderStore identityProviderStore)
-        {
-            _userResolver = userResolver;
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _interaction = interaction;
-            _clientStore = clientStore;
-            _schemeProvider = schemeProvider;
-            _events = events;
-            _emailSender = emailSender;
-            _localizer = localizer;
-            _loginConfiguration = loginConfiguration;
-            _registerConfiguration = registerConfiguration;
-            _identityOptions = identityOptions;
-            _logger = logger;
-            _identityProviderStore = identityProviderStore;
-        }
+        private readonly UserResolver<TUser> _userResolver = userResolver;
+        private readonly UserManager<TUser> _userManager = userManager;
+        private readonly ApplicationSignInManager<TUser> _signInManager = signInManager;
+        private readonly IIdentityServerInteractionService _interaction = interaction;
+        private readonly IClientStore _clientStore = clientStore;
+        private readonly IAuthenticationSchemeProvider _schemeProvider = schemeProvider;
+        private readonly IEventService _events = events;
+        private readonly IEmailSender _emailSender = emailSender;
+        private readonly IGenericControllerLocalizer<AccountController<TUser, TKey>> _localizer = localizer;
+        private readonly LoginConfiguration _loginConfiguration = loginConfiguration;
+        private readonly RegisterConfiguration _registerConfiguration = registerConfiguration;
+        private readonly IdentityOptions _identityOptions = identityOptions;
+        private readonly ILogger<AccountController<TUser, TKey>> _logger = logger;
+        private readonly IIdentityProviderStore _identityProviderStore = identityProviderStore;
 
         /// <summary>
         /// Entry point into the login workflow
@@ -749,7 +731,7 @@ namespace Skoruba.Duende.IdentityServer.STS.Identity.Controllers
                 {
                     allowLocal = client.EnableLocalLogin;
 
-                    if (client.IdentityProviderRestrictions != null && client.IdentityProviderRestrictions.Any())
+                    if (client.IdentityProviderRestrictions != null && client.IdentityProviderRestrictions.Count != 0)
                     {
                         providers = providers.Where(provider => client.IdentityProviderRestrictions.Contains(provider.AuthenticationScheme)).ToList();
                     }

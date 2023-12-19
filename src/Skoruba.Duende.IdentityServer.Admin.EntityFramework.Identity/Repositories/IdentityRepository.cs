@@ -19,7 +19,10 @@ using Skoruba.Duende.IdentityServer.Admin.EntityFramework.Identity.Repositories.
 
 namespace Skoruba.Duende.IdentityServer.Admin.EntityFramework.Identity.Repositories
 {
-    public class IdentityRepository<TIdentityDbContext, TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TRoleClaim, TUserToken>
+    public class IdentityRepository<TIdentityDbContext, TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TRoleClaim, TUserToken>(TIdentityDbContext dbContext,
+        UserManager<TUser> userManager,
+        RoleManager<TRole> roleManager,
+        IMapper mapper)
         : IIdentityRepository<TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TRoleClaim, TUserToken>
         where TIdentityDbContext : IdentityDbContext<TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TRoleClaim, TUserToken>
         where TUser : IdentityUser<TKey>
@@ -31,23 +34,12 @@ namespace Skoruba.Duende.IdentityServer.Admin.EntityFramework.Identity.Repositor
         where TRoleClaim : IdentityRoleClaim<TKey>
         where TUserToken : IdentityUserToken<TKey>
     {
-        protected readonly TIdentityDbContext DbContext;
-        protected readonly UserManager<TUser> UserManager;
-        protected readonly RoleManager<TRole> RoleManager;
-        protected readonly IMapper Mapper;
+        protected readonly TIdentityDbContext DbContext = dbContext;
+        protected readonly UserManager<TUser> UserManager = userManager;
+        protected readonly RoleManager<TRole> RoleManager = roleManager;
+        protected readonly IMapper Mapper = mapper;
 
         public bool AutoSaveChanges { get; set; } = true;
-
-        public IdentityRepository(TIdentityDbContext dbContext,
-            UserManager<TUser> userManager,
-            RoleManager<TRole> roleManager,
-            IMapper mapper)
-        {
-            DbContext = dbContext;
-            UserManager = userManager;
-            RoleManager = roleManager;
-            Mapper = mapper;
-        }
 
         public virtual TKey ConvertKeyFromString(string id)
         {
@@ -359,7 +351,7 @@ namespace Skoruba.Duende.IdentityServer.Admin.EntityFramework.Identity.Repositor
             var user = await UserManager.FindByIdAsync(userId);
             var userLoginInfos = await UserManager.GetLoginsAsync(user);
 
-            return userLoginInfos.ToList();
+            return [.. userLoginInfos];
         }
 
         public virtual Task<TUserLogin> GetUserProviderAsync(string userId, string providerKey)
