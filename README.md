@@ -90,6 +90,12 @@ Project template options:
 git clone https://github.com/skoruba/Duende.IdentityServer.Admin
 ```
 
+- If you get the filename too long error when cloning, run below code in CMD Admin mode.
+
+```sh
+git config --system core.longpaths true
+```
+
 ## Running via Docker
 
 - It is possible to run Admin UI through the docker.
